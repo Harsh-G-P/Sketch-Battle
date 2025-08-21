@@ -1,36 +1,25 @@
 import { create } from 'zustand'
 import toast from 'react-hot-toast'
-import { axiosInstance } from '../lib/axios'
+import { axiosInstance, setAuthToken } from '../lib/axios'
 
 export const useAuthStore = create((set) => ({
     authUser: null,
     checkingAuth: true,
-
     loading: false,
-
-    signup: async (signupData) => {
-        try {
-            set({ loading: true })
-            const res = await axiosInstance.post('/auth/sign', signupData)
-            set({ authUser: res.data.user })
-            toast.success("Account created successfully")
-        } catch (error) {
-            toast.error(error.response.data.message || "Something went Wrong")
-        } finally {
-            set({ loading: false })
-        }
-    },
 
     login: async (loginData) => {
         try {
             set({ loading: true })
             const res = await axiosInstance.post('/auth/login', loginData)
-            set({ authUser: res.data.user })
-            toast.success("Login successfully")
+            
+            const { user, token } = res.data
+            localStorage.setItem('token', token)       // save token
+            setAuthToken(token)                        // set axios header
+            set({ authUser: user })
+            
+            toast.success("Login successful")
         } catch (error) {
-            toast.error(error.response?.data?.message ||
-                error.response?.data?.msg ||
-                "Something went Wrong")
+            toast.error(error.response?.data?.message || "Something went wrong")
         } finally {
             set({ loading: false })
         }
@@ -38,27 +27,33 @@ export const useAuthStore = create((set) => ({
 
     logout: async () => {
         try {
-            const res = await axiosInstance.post('/auth/logout')
-            if (res.status === 200) {
-                set({ authUser: null })
-            }
-            toast.success("Logout Successfully")
+            await axiosInstance.post('/auth/logout')
+            localStorage.removeItem('token')          // remove token
+            setAuthToken(null)                         // remove axios header
+            set({ authUser: null })
+            toast.success("Logout successful")
         } catch (error) {
-            toast.error(error.response.data.message || "Something went Wrong")
+            toast.error(error.response?.data?.message || "Something went wrong")
         }
     },
 
     checkAuth: async () => {
         try {
-            const res = await axiosInstance.get('/auth/me')
-            set(({ authUser: res.data.user }))
+            const token = localStorage.getItem('token')
+            if (token) {
+                setAuthToken(token)                   // set token in axios headers
+                const res = await axiosInstance.get('/auth/me')
+                set({ authUser: res.data.user })
+            }
         } catch (error) {
             console.log(error)
+            localStorage.removeItem('token')          // cleanup if token invalid
+            setAuthToken(null)
+            set({ authUser: null })
         } finally {
             set({ checkingAuth: false })
         }
     },
 
     setAuthUser: (user) => set({ authUser: user }),
-
 }))
