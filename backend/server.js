@@ -53,7 +53,7 @@ app.use(cors({
 }))
 
 app.get('/', (_, res) => {
-  res.send('SketchBattle backend is running!');
+  res.send('SketchBattle backend is running! :)');
 });
 
 //routes
