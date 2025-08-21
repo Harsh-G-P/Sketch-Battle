@@ -39,7 +39,7 @@ app.use(express.json({ limit: '100mb' }));
 app.use(express.urlencoded({ limit: '100mb', extended: true }));
 app.use(cookieParser())
 
-const allowedOrigins = [process.env.CLIENT_URL, process.env.ADMIN_URL]
+const allowedOrigins = [process.env.CLIENT_URL,"https://sketch-battle-admin.vercel.app"]
 
 app.use(cors({
   origin: function (origin, callback) {
