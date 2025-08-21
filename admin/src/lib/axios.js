@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const BASE_URL = import.meta.env.MODE === 'development' ? 'https://sketch-battle-e2og.vercel.app/api' : '/api'
+const BASE_URL = import.meta.env.MODE === 'development' ? 'https://sketch-battle-backend.vercel.app/api' : '/api'
 
 export const axiosInstance = axios.create({
     baseURL:BASE_URL,
