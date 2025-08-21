@@ -9,7 +9,7 @@ import Draw from './pages/Draw'
 
 import { useAuthStore } from './store/useAuthStore'
 
-import Header from './components/Heade'
+import Header from './components/Header'
 import Battle_lobby from './pages/Battle_lobby'
 import BattlePage from './pages/BattlePage'
 import BattleResultPage from './pages/BattleResultPage'
